@@ -1,6 +1,5 @@
 # Import python packages
 import streamlit as st
-from snowflake.snowpark.context import get_active_session
 from snowflake.snowpark.functions import col
 
 # Write directly to the app
@@ -17,6 +16,8 @@ st.write("The Name on your smoothie will be:", name_on_order)
 
 # Step 2: Get session
 session = get_active_session()
+cnx = st.connection("snowflake")
+session = cnx.session()
 
 # ✅ Use fruit_options table for ingredients
 my_dataframe = session.table("smoothies.public.fruit_options").select(col("FRUIT_NAME"))
