@@ -1,6 +1,7 @@
 # Import python packages
 import streamlit as st
 from snowflake.snowpark.functions import col
+import requests   # ✅ added for SmoothieFroot API
 
 st.title(":cup_with_straw: Customize Your Smoothie! :cup_with_straw:")
 
@@ -24,6 +25,23 @@ ingredients_list = st.multiselect(
     fruit_list,
     max_selections=5
 )
+
+# ---------------------------
+# ✅ SmoothieFroot API call
+# ---------------------------
+fruit_choice = st.text_input("Enter a fruit to get nutrition info:", "watermelon")
+
+if st.button("Get Fruit Info"):
+    try:
+        response = requests.get(f"https://my.smoothiefroot.com/api/fruit/{fruit_choice.lower()}")
+        if response.status_code == 200:
+            fruit_data = response.json()
+            st.success(f"Here are the details for {fruit_choice.capitalize()}:")
+            st.json(fruit_data)
+        else:
+            st.error(f"Could not fetch data for {fruit_choice}. Status code: {response.status_code}")
+    except Exception as e:
+        st.error(f"Error fetching data: {e}")
 
 # Step 4: Insert order
 if ingredients_list:
